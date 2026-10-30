@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Введите x (|x| < 1): ");
+        double x = sc.nextDouble();
+
+        System.out.print("Введите n (число слагаемых): ");
+        int n = sc.nextInt();
+
+        System.out.print("Введите e (>0): ");
+        double e = sc.nextDouble();
+
+        if (Math.abs(x) >= 1.0) {
+            System.out.println("Ошибка: |x| должен быть строго меньше 1");
+            return;
+        }
+        if (n <= 0 || e <= 0) {
+            System.out.println("Ошибка: n и e должны быть положительными");
+            return;
+        }
+
+        double sumN   = 0.0;
+        double sumE   = 0.0;
+        double sumE10 = 0.0;
+
+
+        double a = x;
+        int k = 0;
+
+
+        double eps = e / 10.0;
+        double x2 = x * x;
+
+        while (k < n || Math.abs(a) > eps) {
+
+            if (k < n) sumN += a;
+
+            if (Math.abs(a) > e)    sumE   += a;
+
+            if (Math.abs(a) > eps)  sumE10 += a;
+
+            k++;
+            if (k > 0) {
+                a = a * x2 * ((2.0 * k - 1) / (2.0 * k)) * ((2.0 * k - 1) / (2.0 * k + 1));
+            }
+
+
+            if (k > 10_000_000) {
+                System.out.println("Предупреждение: прервано после 10^7 итераций");
+                break;
+            }
+        }
+
+        double exact = Math.asin(x);
+
+        System.out.println();
+        System.out.printf("1) Сумма %d слагаемых:            %.15f%n", n, sumN);
+        System.out.printf("2) Сумма слагаемых с |a| > e:    %.15f%n", sumE);
+        System.out.printf("3) Сумма слагаемых с |a| > e/10: %.15f%n", sumE10);
+        System.out.printf("4) Math.asin(x):                 %.15f%n", exact);
+        System.out.println();
+        System.out.printf("Погрешность п.1:  %.3e%n", Math.abs(sumN   - exact));
+        System.out.printf("Погрешность п.2:  %.3e%n", Math.abs(sumE   - exact));
+        System.out.printf("Погрешность п.3:  %.3e%n", Math.abs(sumE10 - exact));
+    }
+}
